@@ -1,4 +1,3 @@
 # ImageShare
 Image sharing application for MacOS 
-[logo]: https://travis-ci.org/Muckfoot/ImageShare.svg?branch=master
-![alt-text][logo]
+[![Build Status](https://travis-ci.org/Muckfoot/ImageShare.svg?branch=master)](https://travis-ci.org/Muckfoot/ImageShare)
