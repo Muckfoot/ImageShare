@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"runtime"
 )
 
 func checkErr(err error) {
+	_, file, line, _ := runtime.Caller(1)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("file: %s, line: %d, error: %s", file, line, err)
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -14,21 +15,37 @@ import (
 	"github.com/therecipe/qt/widgets"
 )
 
+var (
+	path string
+	root string = "/Users/rekfuki/Documents/Coding/ImageShare/"
+)
+
 func main() {
+	logf, err := os.OpenFile(root+"bot-erros.log",
+		os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+
+	defer logf.Close()
+	log.SetOutput(logf)
+
 	widgets.NewQApplication(len(os.Args), os.Args)
 
 	NewImageShareForm().Show()
 
 	var config Configuration
-	loadJSON("config.json", &config)
+	loadJSON(root+"config.json", &config)
 
 	var auth Authentication
-	loadJSON("auth.json", &auth)
+	loadJSON(root+"auth.json", &auth)
 
 	auth.Access_Token, auth.Refresh_Token, auth.Expires_In = getAccessToken(auth)
 
-	path := config.Path
+	path = config.Path
 	previousSS := config.PreviousSS
+	log.Print(previousSS)
+	log.Print(path)
 
 	hasUpdated := false
 
@@ -54,7 +71,7 @@ func main() {
 	file, err := json.Marshal(config)
 	checkErr(err)
 
-	err = ioutil.WriteFile("config.json", file, 0644)
+	err = ioutil.WriteFile(root+"config.json", file, 0644)
 	checkErr(err)
 }
 
@@ -72,6 +89,7 @@ func update(path string, previousSS string) (bool, string) {
 	return false, previousSS
 
 }
+
 func getAccessToken(auth Authentication) (string, string, int64) {
 	authUrl := "https://api.imgur.com/oauth2/token"
 	resp, err := http.PostForm(authUrl,
@@ -86,6 +104,7 @@ func getAccessToken(auth Authentication) (string, string, int64) {
 
 	return authResp.Access_Token, authResp.Refresh_Token, authResp.Expires_In
 }
+
 func upload(path string, ssPath string, accessToken string) {
 	file, err := ioutil.ReadFile(path + ssPath)
 	checkErr(err)
@@ -104,7 +123,17 @@ func upload(path string, ssPath string, accessToken string) {
 
 	var uploadResponse UploadResponse
 	err = json.NewDecoder(resp.Body).Decode(&uploadResponse)
-	checkErr(err)
+	if err != nil {
+		switch err.Error() {
+		case "EOF":
+			upload(path, ssPath, accessToken)
+			return
+		default:
+			checkErr(err)
+			return
+		}
+	}
+	// checkErr(err)
 
 	if uploadResponse.Success {
 		link := uploadResponse.Data.Link
@@ -112,6 +141,7 @@ func upload(path string, ssPath string, accessToken string) {
 		mack.Beep(1)
 		err = mack.Notify(link, "Image has been uploaded to imgur")
 		checkErr(err)
+		updateHistoryList(link, ssPath, 1)
 	} else {
 		mack.Beep(1)
 		err = mack.Notify("Image failed to upload")

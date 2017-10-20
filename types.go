@@ -1,7 +1,5 @@
 package main
 
-import "github.com/therecipe/qt/core"
-
 type Configuration struct {
 	Path       string `json:"path"`
 	PreviousSS string `json:"previousSS"`
@@ -76,7 +74,6 @@ type AppGeoSettings struct {
 	ImagePreviewFrame  Size
 }
 
-type WSHL struct {
-	core.QObject
-	_ func(string, string, string) `signal:"writeSessionHistoryList"`
+type historyList struct {
+	_ func() `slot:"updateHistoryList"`
 }
