@@ -12,6 +12,7 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then $GOPATH/src/github.com/Muckfoot/ImageShare/CI/darwin.sh; fi
 
 script:
+    - /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     - brew update
     - brew install qt5
     - brew outdated qt5 || brew upgrade qt5
