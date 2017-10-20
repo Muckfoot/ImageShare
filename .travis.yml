@@ -9,7 +9,7 @@ matrix:
       env: DESKTOP=true ANDROID=false QT_HOMEBREW=true
 
 install:
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then travis_wait 45 $GOPATH/src/github.com/therecipe/qt/internal/ci/darwin.sh; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then travis_wait 45 $GOPATH/src/github.com/Muckfoot/ImageShare/CI/darwin.sh; fi
 
 script:
     - go get -v github.com/therecipe/qt/cmd/...
