@@ -23,9 +23,6 @@ before_install:
     - ls $HOME/*
     - du -sh $HOME/*
 
-install:
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then $GOPATH/src/github.com/Muckfoot/ImageShare/CI/darwin.sh; fi
-
 script:
     - go get -v github.com/therecipe/qt/cmd/...
     - go get -v github.com/everdev/mack
@@ -33,4 +30,4 @@ script:
 
     - $GOPATH/bin/qtsetup
 
-    - go run main.go ui.go utils.go types.go
+    - go build main.go ui.go utils.go types.go
