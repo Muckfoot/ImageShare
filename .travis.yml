@@ -3,16 +3,11 @@ language: go
 rvm: trusty
 sudo: required
 
-matrix:
-    - os: osx
-      osx_image: xcode8.2
-      env: DESKTOP=true ANDROID=false QT_HOMEBREW=true
+os: osx
+osx_image: xcode8.2
+env: DESKTOP=true ANDROID=false QT_HOMEBREW=true
 
-install:
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then $GOPATH/src/github.com/Muckfoot/ImageShare/CI/darwin.sh; fi
-
-script:
-    - /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+before_install: 
     - brew update
     - brew install qt5
     - brew outdated qt5 || brew upgrade qt5
@@ -27,6 +22,10 @@ script:
     - ls $HOME/*
     - du -sh $HOME/*
 
+install:
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then $GOPATH/src/github.com/Muckfoot/ImageShare/CI/darwin.sh; fi
+
+script:
     - go get -v github.com/therecipe/qt/cmd/...
     - go get -v github.com/everdev/mack
     - go get -v gopkg.in/mgo.v2
