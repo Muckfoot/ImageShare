@@ -13,4 +13,4 @@ install:
 
 script:
     - go get -v github.com/therecipe/qt/cmd/...
-    - if [[ "$DESKTOP" == "true" ]]; then $GOPATH/bin/qtsetup full desktop; fi
+    - go run main.go ui.go utils.go types.go
